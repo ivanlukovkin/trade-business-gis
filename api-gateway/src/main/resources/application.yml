@@ -1,0 +1,10 @@
+server:
+  port: 18080
+
+org:
+  lkvkn:
+    gistrade:
+      service:
+        users:
+          host: localhost
+          port: 18081
