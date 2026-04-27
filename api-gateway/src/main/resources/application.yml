@@ -1,6 +1,15 @@
 server:
   port: 18080
 
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  show-actuator: true
+
 org:
   lkvkn:
     gistrade:

@@ -11,7 +11,6 @@ plugins {
 rootProject.name = "trade-business-gis"
 
 include(
-    "proto-common",
     "users-service",
     "library",
     "api-gateway"

@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     implementation(project(":users-service"))
+    implementation(project(":library"))
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
     implementation(libs.grpcProtobuf)
