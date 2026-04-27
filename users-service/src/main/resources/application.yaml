@@ -1,0 +1,20 @@
+server:
+  port: 18091
+grpc:
+  port: 18081
+  enable-reflection: true
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:15432/trade_business_gis_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect

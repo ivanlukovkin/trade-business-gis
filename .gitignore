@@ -2,3 +2,5 @@
 **/bin/
 .vscode/
 .gradle/
+**/.DS_Store
+.env
