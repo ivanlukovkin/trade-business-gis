@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.lkvkn.gistrade.common.enums.AppRole;
 import org.lkvkn.gistrade.users.model.User;
 import org.springframework.stereotype.Repository;
 
@@ -28,46 +27,23 @@ public class UserQueryRepository {
         Root<User> root = query.from(User.class);
         List<Predicate> predicates = new ArrayList<>();
         for (Map.Entry<String, String> entry : properties.entrySet()) {
-            String fieldName = entry.getKey();
             String fieldValue = entry.getValue();
+            String fieldName = entry.getKey();
+            switch (fieldName) {
+                case "first_name" -> fieldName = "firstName";
+                case "last_name" -> fieldName = "lastName";
+            }
             if (fieldValue != null && !fieldValue.trim().isEmpty()) {
                 predicates.add(criteriaBuilder.equal(root.get(fieldName), fieldValue));
             }
         }
-        query.where(new Predicate[0]);
+        if (!predicates.isEmpty()) {
+            query.where(predicates.toArray(new Predicate[0]));
+        }
         try {
             return entityManager.createQuery(query).getResultList();
         } catch (Exception _) {
-            return null;
+            return new ArrayList<>();
         }
-    }
-
-    public User partialUpdate(Long userId, Map<String, String> properties) {
-        var criteriaBuilder = entityManager.getCriteriaBuilder();
-        var update = criteriaBuilder.createCriteriaUpdate(User.class);
-        var root = update.from(User.class);
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            String fieldName = entry.getKey();
-            String fieldValue = entry.getValue();
-            if (fieldValue != null && !fieldValue.trim().isEmpty()) {
-                update.set(root.get(fieldName), convertValue(fieldName, fieldValue));
-            }
-        }
-        update.where(criteriaBuilder.equal(root.get("user_id"), userId));
-        int updatedCount = entityManager.createQuery(update).executeUpdate();
-        if (updatedCount == 0) {
-            throw new RuntimeException("User not found with id: " + userId);
-        }
-        return entityManager.find(User.class, userId);
-    }
-
-    private Object convertValue(String fieldName, String fieldValue) {
-        if ("role".equals(fieldName)) {
-            return AppRole.valueOf(fieldValue.toUpperCase());
-        }
-        if ("user_id".equals(fieldValue)) {
-            return Long.valueOf(fieldValue);
-        }
-        return fieldValue;
     }
 }

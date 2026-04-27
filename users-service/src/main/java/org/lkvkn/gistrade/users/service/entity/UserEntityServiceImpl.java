@@ -10,9 +10,12 @@ import org.lkvkn.gistrade.users.model.User;
 import org.lkvkn.gistrade.users.repository.UserQueryRepository;
 import org.lkvkn.gistrade.users.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserEntityServiceImpl implements UserEntityService {
@@ -49,12 +52,27 @@ public class UserEntityServiceImpl implements UserEntityService {
     }
 
     @Override
+    @Transactional
     public User updateFully(User dto) throws UserAlreadyExistsException, UserNotFoundException {
+        log.debug("Fully updating user with id: {}", dto.getId());
         Long userId = dto.getId();
-        if (!repository.existsById(userId)) {
-            throw new UserNotFoundException(userId);
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null for update");
         }
-        return repository.save(dto);
+        User existing = repository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
+        if (!existing.getUsername().equals(dto.getUsername())) {
+            if (repository.existsByUsername(dto.getUsername())) {
+                throw new UserAlreadyExistsException(dto.getUsername());
+            }
+        }
+        existing.setFirstName(dto.getFirstName());
+        existing.setLastName(dto.getLastName());
+        existing.setPatronimyc(dto.getPatronimyc());
+        existing.setUsername(dto.getUsername());
+        existing.setPassword(dto.getPassword());
+        existing.setRole(dto.getRole());
+        return repository.save(existing);
     }
 
     @Override
@@ -64,56 +82,32 @@ public class UserEntityServiceImpl implements UserEntityService {
     }
 
     @Override
-    public User updateFullName(Long primaryKey, String firstName, String lastName, String patronimyc)
-            throws UserNotFoundException {
-        User found = read(primaryKey);
-        found.setFirstName(firstName);
-        found.setLastName(lastName);
-        found.setPatronimyc(patronimyc);
+    @Transactional
+    public User partialUpdate(Long userId, Map<String, String> stringFieldsMap) {
+        User found = read(userId);
+        for (var entry : stringFieldsMap.entrySet()) {
+            String newValue = entry.getValue();
+            switch (entry.getKey()) {
+                case "username" -> changeUsername(found, newValue);
+                case "first_name" -> found.setFirstName(newValue);
+                case "last_name" -> found.setLastName(newValue);
+                case "patronimyc" -> found.setPatronimyc(newValue);
+                case "password" -> found.setPassword(newValue);
+                case "role" -> found.setRole(AppRole.valueOf(newValue.toUpperCase()));
+            }
+        }
         return repository.save(found);
     }
 
-    @Override
-    public User updateUsername(Long primaryKey, String username)
-            throws UserNotFoundException, UserAlreadyExistsException {
-        User found = read(primaryKey);
-        if (found.getUsername() != username && repository.existsByUsername(username)) {
+    private void changeUsername(User found, String username) {
+        if (!found.getUsername().equals(username) && repository.existsByUsername(username)) {
             throw new UserAlreadyExistsException(username);
         }
         found.setUsername(username);
-        return repository.save(found);
-    }
-
-    @Override
-    public User updatePassword(Long primaryKey, String password) throws UserNotFoundException {
-        User found = read(primaryKey);
-        found.setPassword(password);
-        return repository.save(found);
-    }
-
-	@Override
-	public User updateRole(Long primaryKey, AppRole role) throws UserNotFoundException {
-        if (role == null) {
-            throw new RuntimeException("Role cannot be null.");
-        }
-        User found = read(primaryKey);
-        found.setRole(role);
-        return repository.save(found);
-	}
-
-	@Override
-	public User updateRole(Long primaryKey, String roleName) throws UserNotFoundException {
-        return updateRole(primaryKey, AppRole.valueOf(roleName));
-	}
-
-    @Override
-    public User partialUpdate(long userId, Map<String, String> stringFieldsMap) {
-        return partialUpdate(userId, stringFieldsMap);
     }
 
     @Override
     public List<User> readByProps(Map<String, String> properties) {
         return queryRepository.findByProperties(properties);
     }
-
 }

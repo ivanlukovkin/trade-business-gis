@@ -15,7 +15,7 @@ public class DtoToEntityMapper implements Function<UserGrpcDto, User> {
         String roleStr = dto.getRole();
         AppRole role = AppRole.USER;
         if (!(roleStr == null || roleStr.trim().isEmpty())) {
-            role = AppRole.valueOf(roleStr);  // Дефолтное значение
+            role = AppRole.valueOf(roleStr);
         }
         return User.builder()
             .id(dto.getId())
