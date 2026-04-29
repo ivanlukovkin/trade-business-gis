@@ -1,0 +1,23 @@
+name: Do migrations on push to master
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  migrate-database:
+    name: Migrate database
+    runs-on: [ self-hosted ]
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name:
+        run: docker compose up flyway-migrate
+        env:
+          DB_HOST: ${{ secrets.PROD_DB_HOST }}
+          DB_PORT: ${{ secrets.PROD_DB_PORT }}
+          DB_NAME: ${{ secrets.PROD_DB_NAME }}
+          DB_USERNAME: ${{ secrets.PROD_DB_USER }}
+          DB_PASSWORD: ${{ secrets.PROD_DB_PWD }}
