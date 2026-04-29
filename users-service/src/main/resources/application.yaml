@@ -6,9 +6,9 @@ grpc:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:15432/trade_business_gis_db
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASS}
     driver-class-name: org.postgresql.Driver
   
   jpa:

@@ -20,6 +20,23 @@ services:
     networks:
       - app-network
 
+  users-service:
+    container_name: users-service
+    build:
+      dockerfile: users-service/Dockerfile
+      context: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+      DB_USER: ${DB_USERNAME}
+      DB_PASS: ${DB_PASSWORD}
+    ports:
+      - "18081:18081"
+    command: [
+      "java",
+      "-jar",
+      "/app/app.jar"
+    ]
+
   flyway-migrate:
     image: flyway/flyway
     environment:
