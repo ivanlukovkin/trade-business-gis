@@ -1,7 +1,8 @@
 name: Test app on any push
 
 on:
-  [ push ]
+  push:
+    branches-ignore: [ master ]
 
 jobs:
 
