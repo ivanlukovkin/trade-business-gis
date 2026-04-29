@@ -19,6 +19,6 @@ runs:
       with:
         name: Results of unit testing
         path: build/test-results/test/*.xml
-        reporter: java-unit
+        reporter: java-junit
         fail-on-error: false
         fail-on-empty: false
