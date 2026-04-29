@@ -42,7 +42,7 @@ public class UserQueryRepository {
         }
         try {
             return entityManager.createQuery(query).getResultList();
-        } catch (Exception _) {
+        } catch (Exception exception) {
             return new ArrayList<>();
         }
     }
