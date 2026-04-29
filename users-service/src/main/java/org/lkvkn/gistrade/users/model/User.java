@@ -77,4 +77,17 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
+    public static User copy(User other) {
+        return User.builder()
+                .id(other.id)
+                .firstName(other.firstName)
+                .lastName(other.lastName)
+                .patronimyc(other.patronimyc)
+                .createdAt(other.createdAt)
+                .updatedAt(other.updatedAt)
+                .username(other.username)
+                .role(other.role)
+                .build();
+    }
+
 }
