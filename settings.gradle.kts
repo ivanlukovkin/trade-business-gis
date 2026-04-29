@@ -8,8 +8,10 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "GIS-for-trade-business-backend"
+rootProject.name = "trade-business-gis"
+
 include(
-    "proto-common",
-    "database-service", 
+    "users-service",
+    "library",
+    "api-gateway"
 )

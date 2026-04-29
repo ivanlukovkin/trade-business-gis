@@ -1,0 +1,62 @@
+services:
+  database:
+    image: postgis/postgis:17-3.4
+    container_name: trade-business-gis-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: trade_business_gis
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+      - /Users/lkvkn/postgres/backups/:/backups
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  flyway-migrate:
+    image: flyway/flyway
+    environment:
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+    command: >
+      -url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} 
+      -schemas=public
+      -user=${DB_USERNAME} 
+      -password=${DB_PASSWORD}
+      -connectRetries=5
+      migrate
+    networks:
+      - app-network
+    volumes:
+      - ./migration/:/flyway/sql
+
+  flyway-repair:
+    image: flyway/flyway
+    environment:
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+    command: >
+      -url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} 
+      -schemas=public
+      -user=${DB_USERNAME} 
+      -password=${DB_PASSWORD}
+      -connectRetries=5
+      repair
+    networks:
+      - app-network
+    volumes:
+      - ./migration/:/flyway/sql
+
+volumes:
+  postgis_data:
+    name: geo_surf_postgis_data
+
+networks:
+  app-network:
+    name: trade_business_gis-network
+    driver: bridge

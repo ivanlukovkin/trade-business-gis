@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_package = "org.lkvkn.gistrade.service.users";
+option java_multiple_files = true;
+option java_outer_classname = "UserServiceProto";
+
+message UserGrpcDto {
+    int64 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string patronimyc = 5;
+    string username = 6;
+    string password = 7;
+    string role = 8;
+    google.protobuf.Timestamp created_at = 9;
+    google.protobuf.Timestamp updated_at = 10;
+}
+
+message FindUserByIdRequest {
+    int64 id = 1;
+}
+
+message FindUserByUsernameRequest {
+    string username = 1;
+}
+
+message PartialUpdateRequest {
+    int64 userId = 1;
+    map<string, string> stringFields = 2;
+}
+
+message FindUserByPropsRequest {
+    map<string, string> stringFields = 2;
+}
+
+message AllUsersResponse {
+    repeated UserGrpcDto users = 1;
+}
+
+service UserService {
+    rpc Create(UserGrpcDto) returns (UserGrpcDto);
+    rpc ReadAll(google.protobuf.Empty) returns (AllUsersResponse);
+    rpc ReadById(FindUserByIdRequest) returns (UserGrpcDto);
+    rpc ReadByProps(FindUserByPropsRequest) returns (AllUsersResponse);
+    rpc Update(UserGrpcDto) returns (UserGrpcDto);
+    rpc PartialUpdate(PartialUpdateRequest) returns (UserGrpcDto);
+    rpc Delete(FindUserByIdRequest) returns (google.protobuf.Empty);
+}
