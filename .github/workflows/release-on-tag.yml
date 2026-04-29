@@ -2,7 +2,8 @@ name: Create release on push Tag
 
 on:
   push:
-    [ tags ]
+    tags:
+      - "*"
 
 permissions:
   contents: write
