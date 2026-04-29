@@ -1,0 +1,22 @@
+name: Test app on any push
+
+on:
+  push:
+    branches-ignore: [ master ]
+
+jobs:
+
+  run-tests:
+    name: Run tests
+    runs-on: [ ubuntu-latest ]
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Launch testing
+        uses: ./.github/actions/unit-test

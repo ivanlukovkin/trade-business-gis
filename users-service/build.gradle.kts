@@ -30,6 +30,11 @@ dependencies {
     implementation("io.github.lognet:grpc-spring-boot-starter:5.2.0")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit.jupiter)
 }
 
 protobuf {
@@ -58,8 +63,17 @@ sourceSets {
             srcDir("build/generated/sources/proto/main/grpc")
         }
     }
+    test {
+        java {
+            srcDir("src/test/java")
+        }
+    }
 }
 
 application {
     mainClass.set("org.lkvkn.gistrade.users.UsersServiceApplication")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
