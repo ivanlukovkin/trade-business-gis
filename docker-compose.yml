@@ -29,6 +29,7 @@ services:
       FLYWAY_USER: ${DB_USERNAME}
       FLYWAY_PASSWORD: ${DB_PASSWORD}
       FLYWAY_CONNECT_RETRIES: 30
+    command: migrate
     networks:
       - app-network
     volumes:
