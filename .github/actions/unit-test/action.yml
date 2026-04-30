@@ -1,5 +1,10 @@
 name: Unit-testing app
 description: Setup and launch unit tests
+inputs:
+  test-results-parent-dir:
+    description: Tests stored directory prefix with slash on end
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -18,7 +23,7 @@ runs:
       uses: dorny/test-reporter@v1
       with:
         name: Results of unit testing
-        path: build/test-results/test/*.xml
+        path: ./${{inputs.test-results-parent-dir}}build/test-results/test/*.xml
         reporter: java-junit
         fail-on-error: false
         fail-on-empty: false
