@@ -20,3 +20,5 @@ jobs:
 
       - name: Launch testing
         uses: ./.github/actions/unit-test
+        with:
+          test-results-parent-dir: "users-service/"
