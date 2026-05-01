@@ -108,6 +108,9 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Override
     public List<User> readByProps(Map<String, String> properties) {
+        if (properties == null) {
+            throw new NullPointerException();
+        }
         return queryRepository.findByProperties(properties);
     }
 }
